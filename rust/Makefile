@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rust
-PKG_VERSION:=1.90.0
+PKG_VERSION:=1.92.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=rustc-$(PKG_VERSION)-src.tar.xz
 PKG_SOURCE_URL:=https://static.rust-lang.org/dist/
-PKG_HASH:=6bfeaddd90ffda2f063492b092bfed925c4b8c701579baf4b1316e021470daac
+PKG_HASH:=ebee170bfe4c4dfc59521a101de651e5534f4dae889756a5c97ca9ea40d0c307
 HOST_BUILD_DIR:=$(BUILD_DIR)/host/rustc-$(PKG_VERSION)-src
 
 PKG_MAINTAINER:=Luca Barbato <lu_zero@luminem.org>
@@ -18,7 +18,7 @@ PKG_LICENSE:=Apache-2.0 MIT
 PKG_LICENSE_FILES:=LICENSE-APACHE LICENSE-MIT
 
 PKG_HOST_ONLY:=1
-PKG_BUILD_FLAGS:=no-mips16
+PKG_USE_MIPS16:=0
 
 include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/package.mk
@@ -82,6 +82,19 @@ define Host/Uninstall
 	# Call the Uninstall script
 	[ -f $(RUST_UNINSTALL) ] && \
 		$(BASH) $(RUST_UNINSTALL) || echo No Uninstall
+endef
+
+define Host/Patch
+	$(if $(HOST_QUILT),rm -rf $(HOST_BUILD_DIR)/patches; mkdir -p $(HOST_BUILD_DIR)/patches)
+	$(if $(HOST_QUILT),$(call PatchDir/Quilt,$(HOST_BUILD_DIR),$(HOST_PATCH_DIR),))
+	$(if $(HOST_QUILT),touch $(HOST_BUILD_DIR)/.quilt_used)
+	$(if $(HOST_QUILT),,$(if $(wildcard $(HOST_PATCH_DIR)/*.patch), \
+		$(foreach p,$(sort $(wildcard $(HOST_PATCH_DIR)/*.patch)), \
+			echo "Applying patch $(notdir $p)" ; \
+			$(PATCH) -f -p1 -d $(HOST_BUILD_DIR) < $p || \
+			{ echo "Patch failed! Please fix: $(notdir $p)!" ; exit 1 ; } ; \
+		) \
+	))
 endef
 
 define Host/Compile
