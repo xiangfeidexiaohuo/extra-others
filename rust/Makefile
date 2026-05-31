@@ -5,17 +5,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rust
-PKG_VERSION:=1.92.0
+PKG_VERSION:=1.95.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=rustc-$(PKG_VERSION)-src.tar.xz
 PKG_SOURCE_URL:=https://static.rust-lang.org/dist/
-PKG_HASH:=ebee170bfe4c4dfc59521a101de651e5534f4dae889756a5c97ca9ea40d0c307
+PKG_HASH:=62b67230754da642a264ca0cb9fc08820c54e2ed7b3baba0289876d4cdb48c08
 HOST_BUILD_DIR:=$(BUILD_DIR)/host/rustc-$(PKG_VERSION)-src
 
 PKG_MAINTAINER:=Luca Barbato <lu_zero@luminem.org>
 PKG_LICENSE:=Apache-2.0 MIT
 PKG_LICENSE_FILES:=LICENSE-APACHE LICENSE-MIT
+PKG_CPE_ID:=cpe:/a:rust-lang:rust
 
 PKG_HOST_ONLY:=1
 PKG_USE_MIPS16:=0
